@@ -5,7 +5,7 @@
 # https://adbshell.com/commands/adb-shell-pm-list-packages
 
 # Versão do script
-VER="v0.0.1"
+VER="v0.0.3"
 
 # Definição de Cores
 # Tabela de cores: https://misc.flogisoft.com/_media/bash/colors_format/256_colors_fg.png
@@ -56,7 +56,7 @@ pause(){
 termux(){
 	clear
     separacao
-	echo -e " ${NEG}Bem vindo(a) ao script Desemparelhar Ticwatch${STD}"
+	echo -e " ${NEG}Bem vindo(a) ao script${STD} ${ROS}Unpair Ticwatch${STD} - ${CIN}${VER}${STD}"
 	echo -e " ${NEG}Modelos compatíveis: PRO 3 ULTRA.${STD}"
 	separacao
     echo -e " ${CYA}Observação:${STD} Se essa é a primeira vez que utiliza"
@@ -119,7 +119,7 @@ conectar_relogio(){
 	if [ "$?" -eq "0" ]; then
 		echo ""
 		echo -e " ${LAR214}Conectando-se ao seu relógio...${STD}" && sleep 3
-		adb connect $IP &>/dev/null
+		adb connect $IP 2>&1
 		if [ "$?" -eq "0" ]; then
 			echo -e " ${GRE046}Conectado com sucesso ao relógio!${STD}" && sleep 3
 			echo ""
@@ -128,11 +128,12 @@ conectar_relogio(){
 				echo ""
 				echo -e " ${NEG}Autorize a conexão no seu relógio${STD}"
                 echo -e " Aparecerá no relógio: ${BLU}Depuração USB?${STD}"
-                echo -e " Toque em ${GRE}OK${STD} ou ${GRE}Manter sempre conectado${STD}."
+                echo -e " Toque em ${GRE}OK${STD} ou em${STD}"
+				echo -e " ${GRE}Sempre permitir a partir deste computador${STD}."
 				echo ""
 				pause " Tecle [Enter] para continuar..." ;
 				# Testa se o humano marcou a opção no relógio			
-				adb disconnect $IP 2>/dev/null && adb connect $IP 2>/dev/null
+				adb disconnect $IP >/dev/null && adb connect $IP >/dev/null
 				if [ "$(adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
 					desemparelhar
 				else
@@ -155,13 +156,15 @@ conectar_relogio(){
 
 # Desemparelhar
 desemparelhar(){
+	echo ""
+    echo -e " ${GRE046}Reiniciando o relógio...${STD}" && sleep 2
     # Limpando as configurações e reiniciando o relógio
     if [ "$(adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
         adb shell "pm clear com.google.android.gms && reboot" >/dev/null
         # Se a execução for bem sussedida, então...
         if [ "$?" -eq "0" ]; then
             echo ""
-            echo -e " ${GRE046}Limpando as configurações e reiniciando o relógio...${STD}" && sleep 2
+            echo -e " ${GRE046}Limpando as configurações...${STD}" && sleep 2
             # Verifica se o relógio já reiniciou e conectou via adb
             echo ""
             echo -e " ${CYA044}Aguardando o relógio se conectar...😴${STD}"
@@ -170,12 +173,13 @@ desemparelhar(){
                 echo -ne "."
                 sleep 1
             done
+			echo ""
             echo -e " Vá em ${AMA226}Configurações${STD}, ${AMA226}Opções do desenvolvedor${STD},"
 	        echo -e " desative e ative a ${AMA226}Depuração USB${STD}"
             echo -e " e aguarde pegar o IP em ${AMA226}Depurar por Wi-Fi${STD}"
             pause " Quando aparece, tecle [Enter] para continuar..."
             # Conecta ao relógio após reiniciar
-            adb connect $IP 2>/dev/null
+            adb connect $IP >/dev/null
             if [ "$(adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
                 echo ""
                 echo -e " ${GRE}*${STD} ${NEG}Relógio conectado com sucesso!!${STD}" && sleep 2
@@ -187,6 +191,7 @@ desemparelhar(){
             adb shell "am start -a android.bluetooth.adapter.action.REQUEST_DISCOVERABLE" >/dev/null
             if [ "$?" -eq "0" ]; then
                 echo -e " ${ROS}Vá para o seu smartphone configure o relógio novamente.${STD}"
+				exit 0
             else
                 echo -e " ${RED}*${STD} ${NEG}Erro! Falha ao desparear.${STD}"
 			    pause " Tecle [Enter] para tentar novamente..." ; desemparelhar
