@@ -76,6 +76,9 @@ termux(){
     echo ""
     echo -e " ${ROS}192.168.68.119${STD}"
     separacao
+	echo "" 
+	pause "Tecle [Enter] para continuar..."
+	clear
 	echo ""
 	echo -e " ${ROX063}Verificando dependências, aguarde...${STD}" && sleep 2
 	if [ -e "/data/data/com.termux/files/usr/bin/adb.bin" ] || [ -e "/usr/bin/adb" ]; then
@@ -83,9 +86,10 @@ termux(){
 		echo ""
 		pause " Tecle [Enter] para continuar..." ; conectar_relogio
 	else
-		echo -e " ${BLU}*${STD} ${NEG}Baixando dependências para utilizar o script no Termux...${SDT}" && sleep 2
+		echo -e " ${BLU}*${STD} ${NEG}Baixando as dependências para utilizar o script${SDT}"
+		echo -e " ${BLU}*${STD} ${NEG}no Termux, aguarde a conclusão...${SDT}" && sleep 2
         pkg update -y -o Dpkg::Options::=--force-confold
-		pkg install android-tools && clear
+		pkg install -y android-tools && clear
 		if [ "$?" -eq "0" ]; then
 			echo ""
 			echo -e " ${GRE}*${STD} ${NEG}Instalação conluida com sucesso!${STD}"
@@ -115,16 +119,16 @@ conectar_relogio(){
 	if [ "$?" -eq "0" ]; then
 		echo ""
 		echo -e " ${LAR214}Conectando-se ao seu relógio...${STD}" && sleep 3
-		adb connect $IP >/dev/null
+		adb connect $IP &>/dev/null
 		if [ "$?" -eq "0" ]; then
 			echo -e " ${GRE046}Conectado com sucesso ao relógio!${STD}" && sleep 3
 			echo ""
 			clear
 			until adb shell pm list packages -e >/dev/null; do
-			#clear
-				echo -e " ${CUI}Mantenha a tela do relógio sempre ativa antes de proceguir${STD}"
-                echo -e " Aparecerá no relógio: ${CYA122}Depuração USB?${STD}"
-                echo -e " Toque em ${GRE}OK${STD} ou manter sempre conectado.${STD}"
+				echo ""
+				echo -e " ${NEG}Autorize a conexão no seu relógio${STD}"
+                echo -e " Aparecerá no relógio: ${BLU}Depuração USB?${STD}"
+                echo -e " Toque em ${GRE}OK${STD} ou ${GRE}Manter sempre conectado${STD}."
 				echo ""
 				pause " Tecle [Enter] para continuar..." ;
 				# Testa se o humano marcou a opção no relógio			
@@ -180,7 +184,7 @@ desemparelhar(){
 			    pause " Tecle [Enter] para tentar novamente..."
             fi
             # Desparear o dispositivo bluetooth do relógio
-            adb shell "am start -a android.bluetooth.adapter.action.REQUEST_DISCOVERABLE"
+            adb shell "am start -a android.bluetooth.adapter.action.REQUEST_DISCOVERABLE" >/dev/null
             if [ "$?" -eq "0" ]; then
                 echo -e " ${ROS}Vá para o seu smartphone configure o relógio novamente.${STD}"
             else
