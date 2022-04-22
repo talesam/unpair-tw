@@ -5,7 +5,7 @@
 # https://adbshell.com/commands/adb-shell-pm-list-packages
 
 # Versão do script
-VER="v0.0.5"
+VER="v0.0.6"
 
 # Definição de Cores
 # Tabela de cores: https://misc.flogisoft.com/_media/bash/colors_format/256_colors_fg.png
@@ -161,15 +161,15 @@ conectar_relogio(){
 desemparelhar(){
 	clear
 	echo ""
-	echo -e " ${ROX027}Aguarde...${STD}"
+	echo -e " ${ROX027}Aguarde...${STD}" && sleep 1
 	# Limpando as configurações e reiniciando o relógio
 	if [ "$(adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
 		adb shell "pm clear com.google.android.gms && reboot" >/dev/null
 		# Se a execução for bem sussedida, então...
 		if [ "$?" -eq "0" ]; then
+			clear
 			echo ""
-			echo -e " ${GRE046}Reiniciando o relógio e limpando as configurações,${STD}"
-			echo -e " ${GRE046}Aguarde o reinício completar...${STD}" && sleep 1
+			echo -e " ${GRE046}Reiniciando o relógio e limpando as configurações,${STD}" && sleep 1
 			# Verifica se o relógio já reiniciou e conectou via adb
 			echo ""
 			echo -e " ${CYA044}Aguardando o relógio se conectar...😴${STD}"
@@ -180,7 +180,6 @@ desemparelhar(){
 			clear
 			echo ""
 			echo -e " Vá em ${AMA226}Configurações${STD}, ${AMA226}Opções do desenvolvedor${STD},"
-			#echo -e " desative e ative a ${AMA226}Depuração USB${STD}"
 			echo -e " e aguarde pegar o IP em ${AMA226}Depurar por Wi-Fi${STD}"
 			pause " Quando aparece, tecle [Enter] para continuar..."
 			# Conecta ao relógio após reiniciar
