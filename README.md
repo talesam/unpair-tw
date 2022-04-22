@@ -7,8 +7,12 @@ _Script 100% compatível com o [Termux](https://f-droid.org/en/packages/com.term
 
 #### Executar e rodar o script
 
-`curl -s https://raw.githubusercontent.com/talesam/unpair-tw/main/unpair_tw.sh -o unpair_tw.sh; bash unpair_tw.sh`
+```
+curl -s https://raw.githubusercontent.com/talesam/unpair-tw/main/unpair_tw.sh -o unpair_tw.sh; bash unpair_tw.sh
+```
 
 Após o comando acima, para chamar o script novamente basta digitar:
 
-`bash unpair_tw.sh`
+```
+bash unpair_tw.sh
+```
