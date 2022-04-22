@@ -3,7 +3,7 @@
 Esse script tem a função de desemparelhar o seu TickWatch sem precisar redefinir o relógio com as configurações de fábrica.
 
 ## Dependências para Linux: adb
-*Script 100% compatível com o Termux*
+_Script 100% compatível com o [Termux](https://f-droid.org/en/packages/com.termux)_
 
 #### Executar e rodar o script
 
