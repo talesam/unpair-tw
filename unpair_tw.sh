@@ -121,7 +121,7 @@ conectar_relogio(){
 	if [ "$?" -eq "0" ]; then
 		echo ""
 		echo -e " ${LAR214}Conectando-se ao seu relógio...${STD}" && sleep 3
-		adb connect $IP 2>&1 > /dev/null
+		adb connect $IP > /dev/null 2>&1
 		if [ "$?" -eq "0" ]; then
 			echo -e " ${GRE046}Conectado com sucesso ao relógio!${STD}" && sleep 3
 			echo ""
