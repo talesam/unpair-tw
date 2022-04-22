@@ -5,7 +5,7 @@
 # https://adbshell.com/commands/adb-shell-pm-list-packages
 
 # Versão do script
-VER="v0.0.3"
+VER="v0.0.4"
 
 # Definição de Cores
 # Tabela de cores: https://misc.flogisoft.com/_media/bash/colors_format/256_colors_fg.png
@@ -56,25 +56,9 @@ pause(){
 termux(){
 	clear
 	separacao
-	echo -e " ${NEG}Bem vindo(a) ao script${STD} ${ROS}Unpair Ticwatch${STD} - ${CIN}${VER}${STD}"
-	echo -e " ${NEG}Modelos compatíveis: PRO 3 ULTRA.${STD}"
-	separacao
-	echo -e " ${CYA}Observação:${STD} Se essa é a primeira vez que utiliza"
-	echo -e " este script, deverá ativar o modo DEPURAÇÂO no"
-	echo -e " seu relógio. Vá em ${YEL}Configurações${STD}, ${YEL}Sistema${STD}, ${YEL}Sobre${STD} e"
-	echo -e " toque em ${YEL}Número da versão${STD} 7 vezes, rapidamente,"
-	echo -e " para desbloquear as opções de desenvolvedor."
-	echo ""
-	echo -e " Em ${YEL}configurações${STD} terá ${YEL}Opções do desenvolvedor${STD}"
-	echo -e " abaixo de ${YEL}Sistema${STD}. Ative as opções ${YEL}Depuração USB${STD}"
-	echo -e " e ${YEL}Depurar por Wifi${STD}. O relógio pode exibir inicialmente"
-	echo -e " uma mensagem dizendo ${YEL}Indisponível${STD} que em breve será"
-	echo -e " substituída por uma sequência de caracteres incluindo o"
-	echo -e " endereço IP. Isso significa que o ADB sobre Wi-Fi"
-	echo -e " foi ativado. Anote o endereço IP exibido aqui."
-	echo -e " Será algo como:"
-	echo ""
-	echo -e " ${ROS}192.168.68.119${STD}"
+	echo -e " ${NEG}Bem vindo(a) ao script${STD} ${BLU}Unpair Ticwatch${STD} - ${CIN}${VER}${STD}"
+	echo -e " ${NEG}Modelos compatíveis:${STD}"
+	echo -e " ${CYA}PRO 3${STD}, ${CYA}PRO 3 ULTRA${STD}."
 	separacao
 	echo "" 
 	pause "Tecle [Enter] para continuar..."
@@ -92,7 +76,25 @@ termux(){
 		pkg install -y android-tools && clear
 		if [ "$?" -eq "0" ]; then
 			echo ""
-			echo -e " ${GRE}*${STD} ${NEG}Instalação conluida com sucesso!${STD}"
+			echo -e " ${GRE}*${STD} ${NEG}Instalação conluida com sucesso!${STD}" && sleep 2
+			clear
+			echo -e " ${LAR208}Vejo que essa é a primeira vez\n que utiliza este script${STD}"
+			echo -e " Você precisará ativar o modo DEPURAÇÂO no"
+			echo -e " seu relógio. Vá em ${YEL}Configurações${STD}, ${YEL}Sistema${STD}, ${YEL}Sobre${STD} e"
+			echo -e " toque em ${YEL}Número da versão${STD} 7 vezes, rapidamente,"
+			echo -e " para desbloquear as opções de desenvolvedor."
+			echo ""
+			echo -e " Em ${YEL}configurações${STD} terá ${YEL}Opções do desenvolvedor${STD}"
+			echo -e " abaixo de ${YEL}Sistema${STD}. Ative as opções ${YEL}Depuração USB${STD}"
+			echo -e " e ${YEL}Depurar por Wifi${STD}. O relógio pode exibir inicialmente"
+			echo -e " uma mensagem dizendo ${YEL}Indisponível${STD} que em breve será"
+			echo -e " substituída por uma sequência de caracteres incluindo o"
+			echo -e " endereço IP (caso demore aparecer, retorne uma tela e"
+			echo -e " acesse novamente) .Isso significa que o ADB sobre Wi-Fi"
+			echo -e " foi ativado. Anote o endereço IP exibido aqui."
+			echo -e " Será algo como:"
+			echo ""
+			echo -e " ${ROS}192.168.68.119${STD}"
 			echo ""
 			pause " Tecle [Enter] para se conectar ao relógio..." ; conectar_relogio
 		else
@@ -119,16 +121,17 @@ conectar_relogio(){
 	if [ "$?" -eq "0" ]; then
 		echo ""
 		echo -e " ${LAR214}Conectando-se ao seu relógio...${STD}" && sleep 3
-		adb connect $IP 2>&1
+		adb connect $IP 2>&1 > /dev/null
 		if [ "$?" -eq "0" ]; then
 			echo -e " ${GRE046}Conectado com sucesso ao relógio!${STD}" && sleep 3
 			echo ""
 			clear
-			until adb shell pm list packages -e >/dev/null; do
+			until adb shell pm list packages -e 2>&1 > /dev/null; do
+				clear
 				echo ""
 				echo -e " ${NEG}Autorize a conexão no seu relógio${STD}"
 				echo -e " Aparecerá no relógio: ${BLU}Depuração USB?${STD}"
-				echo -e " Toque em ${GRE}OK${STD} ou em${STD}"
+				echo -e " Toque em:${STD}"
 				echo -e " ${GRE}Sempre permitir a partir deste computador${STD}."
 				echo ""
 				pause " Tecle [Enter] para continuar..." ;
@@ -156,26 +159,28 @@ conectar_relogio(){
 
 # Desemparelhar
 desemparelhar(){
+	clear
 	echo ""
-	echo -e " ${GRE046}Reiniciando o relógio...${STD}" && sleep 2
+	echo -e " ${ROX027}Aguarde...${STD}"
 	# Limpando as configurações e reiniciando o relógio
 	if [ "$(adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
 		adb shell "pm clear com.google.android.gms && reboot" >/dev/null
 		# Se a execução for bem sussedida, então...
 		if [ "$?" -eq "0" ]; then
 			echo ""
-			echo -e " ${GRE046}Limpando as configurações...${STD}" && sleep 2
+			echo -e " ${GRE046}Reiniciando o relógio e limpando as configurações,${STD}"
+			echo -e " ${GRE046}Aguarde o reinício completar...${STD}" && sleep 1
 			# Verifica se o relógio já reiniciou e conectou via adb
 			echo ""
 			echo -e " ${CYA044}Aguardando o relógio se conectar...😴${STD}"
 			until $(ping -c 1 $IP >/dev/null 2>&1); do
 				# Aguardando relógio se conectar
 				echo -ne "."
-				sleep 1
 			done
+			clear
 			echo ""
 			echo -e " Vá em ${AMA226}Configurações${STD}, ${AMA226}Opções do desenvolvedor${STD},"
-			echo -e " desative e ative a ${AMA226}Depuração USB${STD}"
+			#echo -e " desative e ative a ${AMA226}Depuração USB${STD}"
 			echo -e " e aguarde pegar o IP em ${AMA226}Depurar por Wi-Fi${STD}"
 			pause " Quando aparece, tecle [Enter] para continuar..."
 			# Conecta ao relógio após reiniciar
@@ -190,13 +195,20 @@ desemparelhar(){
 			# Desparear o dispositivo bluetooth do relógio
 			adb shell "am start -a android.bluetooth.adapter.action.REQUEST_DISCOVERABLE" >/dev/null
 			if [ "$?" -eq "0" ]; then
-				echo -e " ${ROS}Vá para o seu smartphone configure o relógio novamente.${STD}"
+				clear
+				echo ""
+				echo -e " Vá para o seu smartphone, abra o ${BLU}Wear OS${STD}"
+				echo -e " Toque em ${BLU}Concordar e continuar,${STD}"
+				echo -e " Vá no seu relógio e confirme a conexão bluetooth."
 				exit 0
 			else
 				echo -e " ${RED}*${STD} ${NEG}Erro! Falha ao desparear.${STD}"
 				pause " Tecle [Enter] para tentar novamente..." ; desemparelhar
 			fi
 		fi
+	else
+		echo -e " ${RED}*${STD} ${NEG}Erro! Falha ao reiniciar o relógio.${STD}"
+		pause " Tecle [Enter] para tentar novamente..." ; desemparelhar
 	fi
 }
 # Chama o script principal
