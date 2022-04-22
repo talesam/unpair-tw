@@ -152,8 +152,8 @@ conectar_relogio(){
 			pause " Tecle [Enter] para tentar novamente..." ; conectar_relogio
 		fi
 	else
-			echo -e " ${RED}*${STD} ${NEG}Erro! Falha na conexão, Verifique seu endereço de IP${STD}"
-			pause " Tecle [Enter] para tentar novamente..." ; conectar_relogio
+		echo -e " ${RED}*${STD} ${NEG}Erro! Falha na conexão, Verifique seu endereço de IP${STD}"
+		pause " Tecle [Enter] para tentar novamente..." ; conectar_relogio
 	fi
 }
 
