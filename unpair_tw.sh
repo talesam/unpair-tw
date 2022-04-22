@@ -5,7 +5,7 @@
 # https://adbshell.com/commands/adb-shell-pm-list-packages
 
 # Versão do script
-VER="v0.0.6"
+VER="v0.0.7"
 
 # Definição de Cores
 # Tabela de cores: https://misc.flogisoft.com/_media/bash/colors_format/256_colors_fg.png
@@ -65,7 +65,7 @@ termux(){
 	clear
 	echo ""
 	echo -e " ${ROX063}Verificando dependências, aguarde...${STD}" && sleep 2
-	if [ -e "/data/data/com.termux/files/usr/bin/adb.bin" ] || [ -e "/usr/bin/adb" ]; then
+	if [ -e "/data/data/com.termux/files/home/.android/adbkey" ] || [ -e "/usr/bin/adb" ]; then
 		echo -e " ${GRE046}Dependencias encontradas, conecte-se ao relógio.${STD}"
 		echo ""
 		pause " Tecle [Enter] para continuar..." ; conectar_relogio
@@ -78,7 +78,8 @@ termux(){
 			echo ""
 			echo -e " ${GRE}*${STD} ${NEG}Instalação conluida com sucesso!${STD}" && sleep 2
 			clear
-			echo -e " ${LAR208}Vejo que essa é a primeira vez\n que utiliza este script${STD}"
+			echo -e " ${ROS}Vejo que essa é a primeira vez que utiliza este script${STD}"
+			echo ""
 			echo -e " Você precisará ativar o modo DEPURAÇÂO no"
 			echo -e " seu relógio. Vá em ${YEL}Configurações${STD}, ${YEL}Sistema${STD}, ${YEL}Sobre${STD} e"
 			echo -e " toque em ${YEL}Número da versão${STD} 7 vezes, rapidamente,"
