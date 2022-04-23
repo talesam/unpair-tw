@@ -65,7 +65,7 @@ termux(){
 	clear
 	echo ""
 	echo -e " ${ROX063}Verificando dependências, aguarde...${STD}" && sleep 2
-	if [ -f "/data/data/com.termux/files/usr/bin/adb.bin" ] || [ -f "/usr/bin/adb" ]; then
+	if [ "ls /data/data/com.termux/files/usr/bin/adb.bin > /dev/null" ] || [ "ls /usr/bin/adb > /dev/null" ]; then
 		echo -e " ${GRE046}Dependencias encontradas, conecte-se ao relógio.${STD}"
 		echo ""
 		pause " Tecle [Enter] para continuar..." ; conectar_relogio
