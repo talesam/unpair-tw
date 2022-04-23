@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Desemparelhar TicWatch sem redefinir de fábrica
 # Por Tales A. Mendonça - talesam@gmail.com
-# https://developer.android.com/studio/command-line/adb
-# https://adbshell.com/commands/adb-shell-pm-list-packages
+# https://developer.android.com/studio/command-line/fakeroot adb
+# https://fakeroot adbshell.com/commands/fakeroot adb-shell-pm-list-packages
 
 # Versão do script
-VER="v0.0.7"
+VER="v0.0.8"
 
 # Definição de Cores
 # Tabela de cores: https://misc.flogisoft.com/_media/bash/colors_format/256_colors_fg.png
@@ -58,14 +58,14 @@ termux(){
 	separacao
 	echo -e " ${NEG}Bem vindo(a) ao script${STD} ${BLU}Unpair Ticwatch${STD} - ${CIN}${VER}${STD}"
 	echo -e " ${NEG}Modelos compatíveis:${STD}"
-	echo -e " ${CYA}PRO 3${STD}, ${CYA}PRO 3 ULTRA${STD}."
+	echo -e " ${CYA}PRO 3${STD}, ${CYA}PRO 3 ULTRA${STD}, ${CYA}PRO 3 ULTRA LTE${STD}."
 	separacao
 	echo "" 
 	pause "Tecle [Enter] para continuar..."
 	clear
 	echo ""
 	echo -e " ${ROX063}Verificando dependências, aguarde...${STD}" && sleep 2
-	if [ -e "/data/data/com.termux/files/home/.android/adbkey" ] || [ -e "/usr/bin/adb" ]; then
+	if [ -f "/data/data/com.termux/files/usr/bin/adb.bin" ] || [ -f "/usr/bin/adb" ]; then
 		echo -e " ${GRE046}Dependencias encontradas, conecte-se ao relógio.${STD}"
 		echo ""
 		pause " Tecle [Enter] para continuar..." ; conectar_relogio
@@ -73,7 +73,7 @@ termux(){
 		echo -e " ${BLU}*${STD} ${NEG}Baixando as dependências para utilizar o script${SDT}"
 		echo -e " ${BLU}*${STD} ${NEG}no Termux, aguarde a conclusão...${SDT}" && sleep 2
 		pkg update -y -o Dpkg::Options::=--force-confold
-		pkg install -y android-tools && clear
+		pkg install -y android-tools && pkg install -y fakeroot && clear
 		if [ "$?" -eq "0" ]; then
 			echo ""
 			echo -e " ${GRE}*${STD} ${NEG}Instalação conluida com sucesso!${STD}" && sleep 2
@@ -91,7 +91,7 @@ termux(){
 			echo -e " uma mensagem dizendo ${YEL}Indisponível${STD} que em breve será"
 			echo -e " substituída por uma sequência de caracteres incluindo o"
 			echo -e " endereço IP (caso demore aparecer, retorne uma tela e"
-			echo -e " acesse novamente) .Isso significa que o ADB sobre Wi-Fi"
+			echo -e " acesse novamente) .Isso significa que o fakeroot adb sobre Wi-Fi"
 			echo -e " foi ativado. Anote o endereço IP exibido aqui."
 			echo -e " Será algo como:"
 			echo ""
@@ -108,6 +108,7 @@ termux(){
 # Conexão do relógio
 conectar_relogio(){
 	clear
+	export ANDROID_NO_USE_FWMARK_CLIENT=1
 	echo ""
 	echo " Digite o endereço IP do seu relógio que encontra-se no"
 	echo -e " caminho abaixo e tecle ${NEG}[Enter]${STD} para continuar:"
@@ -118,16 +119,17 @@ conectar_relogio(){
 	read IP
 
 	ping -c 1 $IP >/dev/null
+
 	# Testa se o relógio está ligado com o modo depuração ativo
 	if [ "$?" -eq "0" ]; then
 		echo ""
 		echo -e " ${LAR214}Conectando-se ao seu relógio...${STD}" && sleep 3
-		adb connect $IP > /dev/null 2>&1
+		fakeroot fakeroot adb connect $IP > /dev/null 2>&1
 		if [ "$?" -eq "0" ]; then
 			echo -e " ${GRE046}Conectado com sucesso ao relógio!${STD}" && sleep 3
 			echo ""
 			clear
-			until adb shell pm list packages -e 2>&1 > /dev/null; do
+			until fakeroot fakeroot adb shell pm list packages -e 2>&1 > /dev/null; do
 				clear
 				echo ""
 				echo -e " ${NEG}Autorize a conexão no seu relógio${STD}"
@@ -136,9 +138,10 @@ conectar_relogio(){
 				echo -e " ${GRE}Sempre permitir a partir deste computador${STD}."
 				echo ""
 				pause " Tecle [Enter] para continuar..." ;
+
 				# Testa se o humano marcou a opção no relógio			
-				adb disconnect $IP >/dev/null && adb connect $IP >/dev/null
-				if [ "$(adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
+				fakeroot fakeroot adb disconnect $IP >/dev/null && fakeroot fakeroot adb connect $IP >/dev/null
+				if [ "$(fakeroot fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
 					desemparelhar
 				else
 					echo ""
@@ -163,15 +166,18 @@ desemparelhar(){
 	clear
 	echo ""
 	echo -e " ${ROX027}Aguarde...${STD}" && sleep 1
+
 	# Limpando as configurações e reiniciando o relógio
-	if [ "$(adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
-		adb shell "pm clear com.google.android.gms && reboot" >/dev/null
+	if [ "$(fakeroot fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
+		fakeroot fakeroot adb shell "pm clear com.google.android.gms && reboot" >/dev/null
+		
 		# Se a execução for bem sussedida, então...
 		if [ "$?" -eq "0" ]; then
 			clear
 			echo ""
 			echo -e " ${GRE046}Reiniciando o relógio e limpando as configurações,${STD}" && sleep 1
-			# Verifica se o relógio já reiniciou e conectou via adb
+			
+			# Verifica se o relógio já reiniciou e conectou via fakeroot adb
 			echo ""
 			echo -e " ${CYA044}Aguardando o relógio se conectar...😴${STD}"
 			until $(ping -c 1 $IP >/dev/null 2>&1); do
@@ -183,9 +189,10 @@ desemparelhar(){
 			echo -e " Vá em ${AMA226}Configurações${STD}, ${AMA226}Opções do desenvolvedor${STD},"
 			echo -e " e aguarde pegar o IP em ${AMA226}Depurar por Wi-Fi${STD}"
 			pause " Quando aparece, tecle [Enter] para continuar..."
+			
 			# Conecta ao relógio após reiniciar
-			adb connect $IP >/dev/null
-			if [ "$(adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
+			fakeroot fakeroot adb connect $IP >/dev/null
+			if [ "$(fakeroot fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
 				echo ""
 				echo -e " ${GRE}*${STD} ${NEG}Relógio conectado com sucesso!!${STD}" && sleep 2
 			else
@@ -193,7 +200,7 @@ desemparelhar(){
 				pause " Tecle [Enter] para tentar novamente..."
 			fi
 			# Desparear o dispositivo bluetooth do relógio
-			adb shell "am start -a android.bluetooth.adapter.action.REQUEST_DISCOVERABLE" >/dev/null
+			fakeroot fakeroot adb shell "am start -a android.bluetooth.adapter.action.REQUEST_DISCOVERABLE" >/dev/null
 			if [ "$?" -eq "0" ]; then
 				clear
 				echo ""
@@ -211,5 +218,9 @@ desemparelhar(){
 		pause " Tecle [Enter] para tentar novamente..." ; desemparelhar
 	fi
 }
-# Chama o script principal
+
+# Cria um diretório temporário e joga todos arquivos lá dentro e remove sempre ao entrar no script
+rm -rf .tmp && mkdir .tmp && cd .tmp
+
+# Chama o script inicial
 termux
