@@ -16,3 +16,7 @@ Após o comando acima, para chamar o script novamente basta digitar:
 ```
 bash unpair_tw.sh
 ```
+
+
+https://user-images.githubusercontent.com/981368/165192575-259e93d4-246a-4f76-b14b-c2632254c26e.mp4
+
