@@ -18,5 +18,6 @@ bash unpair_tw.sh
 ```
 
 
-https://user-images.githubusercontent.com/981368/165192575-259e93d4-246a-4f76-b14b-c2632254c26e.mp4
+
+<center>https://user-images.githubusercontent.com/981368/165192654-6f12b259-9765-42ca-88f6-329555b1d3fa.mp4</center>
 
