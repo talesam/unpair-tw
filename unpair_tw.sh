@@ -5,7 +5,7 @@
 # https://fakeroot adbshell.com/commands/fakeroot adb-shell-pm-list-packages
 
 # Versão do script
-VER="v0.0.8"
+VER="v0.0.9"
 
 # Definição de Cores
 # Tabela de cores: https://misc.flogisoft.com/_media/bash/colors_format/256_colors_fg.png
@@ -124,12 +124,12 @@ conectar_relogio(){
 	if [ "$?" -eq "0" ]; then
 		echo ""
 		echo -e " ${LAR214}Conectando-se ao seu relógio...${STD}" && sleep 3
-		fakeroot fakeroot adb connect $IP > /dev/null 2>&1
+		fakeroot adb connect $IP > /dev/null 2>&1
 		if [ "$?" -eq "0" ]; then
 			echo -e " ${GRE046}Conectado com sucesso ao relógio!${STD}" && sleep 3
 			echo ""
 			clear
-			until fakeroot fakeroot adb shell pm list packages -e 2>&1 > /dev/null; do
+			until fakeroot adb shell pm list packages -e 2>&1 > /dev/null; do
 				clear
 				echo ""
 				echo -e " ${NEG}Autorize a conexão no seu relógio${STD}"
@@ -140,8 +140,8 @@ conectar_relogio(){
 				pause " Tecle [Enter] para continuar..." ;
 
 				# Testa se o humano marcou a opção no relógio			
-				fakeroot fakeroot adb disconnect $IP >/dev/null && fakeroot fakeroot adb connect $IP >/dev/null
-				if [ "$(fakeroot fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
+				fakeroot adb disconnect $IP >/dev/null && fakeroot adb connect $IP >/dev/null
+				if [ "$(fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
 					desemparelhar
 				else
 					echo ""
@@ -168,8 +168,8 @@ desemparelhar(){
 	echo -e " ${ROX027}Aguarde...${STD}" && sleep 1
 
 	# Limpando as configurações e reiniciando o relógio
-	if [ "$(fakeroot fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
-		fakeroot fakeroot adb shell "pm clear com.google.android.gms && reboot" >/dev/null
+	if [ "$(fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
+		fakeroot adb shell "pm clear com.google.android.gms && reboot" >/dev/null
 		
 		# Se a execução for bem sussedida, então...
 		if [ "$?" -eq "0" ]; then
@@ -191,8 +191,8 @@ desemparelhar(){
 			pause " Quando aparece, tecle [Enter] para continuar..."
 			
 			# Conecta ao relógio após reiniciar
-			fakeroot fakeroot adb connect $IP >/dev/null
-			if [ "$(fakeroot fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
+			fakeroot adb connect $IP >/dev/null
+			if [ "$(fakeroot adb connect $IP | cut -f1,2 -d" ")" = "already connected" ]; then
 				echo ""
 				echo -e " ${GRE}*${STD} ${NEG}Relógio conectado com sucesso!!${STD}" && sleep 2
 			else
@@ -200,7 +200,7 @@ desemparelhar(){
 				pause " Tecle [Enter] para tentar novamente..."
 			fi
 			# Desparear o dispositivo bluetooth do relógio
-			fakeroot fakeroot adb shell "am start -a android.bluetooth.adapter.action.REQUEST_DISCOVERABLE" >/dev/null
+			fakeroot adb shell "am start -a android.bluetooth.adapter.action.REQUEST_DISCOVERABLE" >/dev/null
 			if [ "$?" -eq "0" ]; then
 				clear
 				echo ""
