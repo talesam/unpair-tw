@@ -204,7 +204,8 @@ desemparelhar(){
 			if [ "$?" -eq "0" ]; then
 				clear
 				echo ""
-				echo -e " Vá para o seu smartphone, abra o ${BLU}Wear OS${STD}"
+				echo -e " Primeiro aceitei ${BLU}Ficar visível${STD} no seu reógio"
+				echo -e " Depois vá para o seu smartphone, abra o ${BLU}Wear OS${STD}"
 				echo -e " Toque em ${BLU}Concordar e continuar,${STD}"
 				echo -e " Vá no seu relógio e confirme a conexão bluetooth."
 				exit 0
